@@ -24,7 +24,7 @@ p {
 }
 
 .scene {
-    height: 120vh;
+    height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -63,42 +63,48 @@ p {
             drop-shadow(0 -3px 0 rgb(255, 255, 255));
   }
 
+.size-cat {
+    width: 40vw;    
+    max-width: 800px;  
+    min-width: 200px;   
+}
+
+.size-skulls {
+    width: 30vw;    
+    max-width: 500px;  
+    min-width: 200px;
+}
+
 /* Nimravidae */
 
 #Nimravidae-cat {
-    width: 800px;
-    left: 2%; 
-    top: 40%;
+    left: 5%; 
+    top: 45vh; 
 }
 
 #Dinictis-cat {
-    width: 800px;
     right: 0%; 
-    top: 30%;
+    top: 30vh;
 }
 
 #Dinaelurus-cat {
-    width: 500px;
     left: 5%; 
-    top: 15%; 
+    top: 15vh; 
 }
 
 #Nimravus-cat {
-    width: 500px;
     right: 5%; 
-    top: 15%;
+    top: 15vh;
 }
 
 #Eusmilus-cat {
-    width: 800px;
     right: 1%;
-    top: 55%;  
+    top: 60vh;  
 }
 
 #Hoplophoneus-cat {
-    width: 800px;
     right: 1%;
-    top: 55%;   
+    top: 60vh;   
 }
 
 /* Nimravidae */
