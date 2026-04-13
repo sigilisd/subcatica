@@ -75,6 +75,27 @@ p {
     min-width: 200px;
 }
 
+/* Machairodontinae */
+
+#Machairodontinae-cat {
+    right: 0%;
+    top: 55vh;
+}
+
+/* Machairodontinae */
+
+/* Barbourofelidae */
+
+#Barbourofelidae-cat {
+    width: 35vw;    
+    max-width: 800px;  
+    min-width: 200px;
+    right: 5%;
+    top: 55vh;
+}
+
+/* Barbourofelidae */
+
 /* Prionodon */
 
 #Prionodon-cat1 {
