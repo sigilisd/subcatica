@@ -75,6 +75,29 @@ p {
     min-width: 200px;
 }
 
+/* Prionodon */
+
+#Prionodon-cat1 {
+    left: 5%;
+    top: 60vh;
+}
+
+#Prionodon-cat2 {
+    right: -5%;
+    top: 5vh;
+}
+
+/* Prionodon */
+
+/* Nandiniidae */
+
+#Nandiniidae-cat {
+    left: 1%;
+    top: 60vh;
+}
+
+/* Nandiniidae */
+
 /* Nimravidae */
 
 #Nimravidae-cat {
