@@ -1,3 +1,7 @@
+* {
+    box-sizing: border-box;
+}
+
 body {
     margin: 0;
     background-color: #121212;
@@ -8,6 +12,15 @@ body {
 
 body::-webkit-scrollbar {
     display: none;
+}
+
+p {
+    max-width: 600px;
+    width: 100%;
+    margin: 0 auto;
+    line-height: 1.6;
+    text-align: justify;
+    text-justify: inter-word;
 }
 
 .scene {
@@ -22,6 +35,7 @@ body::-webkit-scrollbar {
 .content {
     z-index: 2;
     text-align: center;
+    transform: translateY(-10vh);
 }
 
 .parallax-cat {
@@ -42,6 +56,53 @@ body::-webkit-scrollbar {
     top: 20%;
 }
 
+.image-contour {
+    filter: drop-shadow(3px 0 0 rgb(255, 255, 255)) 
+            drop-shadow(-3px 0 0 rgb(255, 255, 255)) 
+            drop-shadow(0 3px 0 rgb(255, 255, 255)) 
+            drop-shadow(0 -3px 0 rgb(255, 255, 255));
+  }
+
+/* Nimravidae */
+
+#Nimravidae-cat {
+    width: 800px;
+    left: 2%; 
+    top: 40%;
+}
+
+#Dinictis-cat {
+    width: 800px;
+    right: 0%; 
+    top: 30%;
+}
+
+#Dinaelurus-cat {
+    width: 500px;
+    left: 5%; 
+    top: 15%; 
+}
+
+#Nimravus-cat {
+    width: 500px;
+    right: 5%; 
+    top: 15%;
+}
+
+#Eusmilus-cat {
+    width: 800px;
+    right: 1%;
+    top: 55%;  
+}
+
+#Hoplophoneus-cat {
+    width: 800px;
+    right: 1%;
+    top: 55%;   
+}
+
+/* Nimravidae */
+
 .progress-bar {
     position: fixed;
     top: 0;
@@ -55,9 +116,17 @@ body::-webkit-scrollbar {
 
 footer {
     display: flex;          
+    flex-direction: column;
     justify-content: center; 
-    align-items: center;     
+    align-items: center;    
     padding: 20px;          
     background-color: #1a1a1a; 
     width: 100%;
+    box-sizing: border-box;
+    min-height: 100px;
+}
+
+footer p {
+    text-align: center;
+    margin: 0;
 }
