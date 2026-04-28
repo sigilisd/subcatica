@@ -75,6 +75,59 @@ p {
     min-width: 200px;
 }
 
+/* Kalimantan cat */
+
+#MarbleСat-cat{
+    right: 2%;
+    top: 65vh;
+}
+
+#Katopuma-cat{
+    left: 5%;
+    top: 60vh; 
+}
+
+/* Kalimantan cat */
+
+/* Panthers */
+
+#Leopard-cat{
+    right: 2%;
+    top: 20vh;
+}
+
+#CaveLion-cat{
+    right: 2%;
+    top: 55vh;
+}
+
+#AmericanLion-cat{
+    left: 2%;
+    top: 30vh;
+}
+
+#Jaguar-cat{
+    right: 2%;
+    top: 10vh;
+}
+
+#Tiger-cat{
+    width: 25vw;
+    left: 5%;
+    top: 55vh;
+}
+
+/* Panthers */
+
+/* Big cats */
+
+#SmokyLeopard-cat{
+    left: 0%;
+    top: 60vh;
+}
+
+/* Big cats */
+
 /* Machairodontinae */
 
 #Machairodontinae-cat {
