@@ -77,12 +77,12 @@ p {
 
 /* Kalimantan cat */
 
-#MarbleСat-cat{
+#marble-cat{
     right: 2%;
     top: 65vh;
 }
 
-#Katopuma-cat{
+#katopuma-cat{
     left: 5%;
     top: 60vh; 
 }
@@ -91,27 +91,27 @@ p {
 
 /* Panthers */
 
-#Leopard-cat{
+#leopard-cat{
     right: 2%;
     top: 20vh;
 }
 
-#CaveLion-cat{
+#cave-lion-cat{
     right: 2%;
     top: 55vh;
 }
 
-#AmericanLion-cat{
+#american-lion-cat{
     left: 2%;
     top: 30vh;
 }
 
-#Jaguar-cat{
+#jaguar-cat{
     right: 2%;
     top: 10vh;
 }
 
-#Tiger-cat{
+#tiger-cat{
     width: 25vw;
     left: 5%;
     top: 55vh;
@@ -121,7 +121,7 @@ p {
 
 /* Big cats */
 
-#SmokyLeopard-cat{
+#smoky-leopard-cat{
     left: 0%;
     top: 60vh;
 }
@@ -130,7 +130,7 @@ p {
 
 /* Machairodontinae */
 
-#Machairodontinae-cat {
+#machairodontinae-cat {
     right: 0%;
     top: 55vh;
 }
@@ -139,7 +139,7 @@ p {
 
 /* Barbourofelidae */
 
-#Barbourofelidae-cat {
+#barbourofelidae-cat {
     width: 35vw;    
     max-width: 800px;  
     min-width: 200px;
@@ -151,12 +151,12 @@ p {
 
 /* Prionodon */
 
-#Prionodon-cat1 {
+#prionodon-cat1 {
     left: 5%;
     top: 60vh;
 }
 
-#Prionodon-cat2 {
+#prionodon-cat2 {
     right: -5%;
     top: 5vh;
 }
@@ -165,7 +165,7 @@ p {
 
 /* Nandiniidae */
 
-#Nandiniidae-cat {
+#nandiniidae-cat {
     left: 1%;
     top: 60vh;
 }
@@ -174,32 +174,32 @@ p {
 
 /* Nimravidae */
 
-#Nimravidae-cat {
+#nimravidae-cat {
     left: 5%; 
     top: 45vh; 
 }
 
-#Dinictis-cat {
+#dinictis-cat {
     right: 0%; 
     top: 30vh;
 }
 
-#Dinaelurus-cat {
+#dinaelurus-cat {
     left: 5%; 
     top: 15vh; 
 }
 
-#Nimravus-cat {
+#nimravus-cat {
     right: 5%; 
     top: 15vh;
 }
 
-#Eusmilus-cat {
+#eusmilus-cat {
     right: 1%;
     top: 60vh;  
 }
 
-#Hoplophoneus-cat {
+#hoplophoneus-cat {
     right: 1%;
     top: 60vh;   
 }
