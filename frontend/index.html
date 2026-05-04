@@ -10,6 +10,16 @@
 <body>
     <div class="progress-bar"></div>
 
+    <div class="controls">
+        <input type="text" id="searchInput" placeholder="Поиск по виду, названию или описанию...">
+        <select id="filterCategory">
+          <option value="all">Все виды</option>
+          <option value="modern">Современные</option>
+          <option value="extinct">Вымершие</option>
+        </select>
+    </div>
+    <div id="results" class="results-count"></div>
+
     <section class="scene" id="welcome">
         <header>
             <h1>Subcatica</h1>
@@ -471,6 +481,6 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-    <script src="js/main.js"></script>
+    <script type="module" src="js/main.js"></script>
 </body>
 </html>

@@ -1,2 +1,4 @@
 node_modules/
 *.log
+frontend/dist/
+backend/dist/

@@ -1,3 +1,5 @@
+@import "./Search.module.css";
+
 * {
     box-sizing: border-box;
 }
@@ -30,6 +32,10 @@ p {
     align-items: center;
     position: relative;
     border-bottom: 1px solid #333;
+}
+
+.scene[hidden] {
+    display: none !important;
 }
 
 .content {
