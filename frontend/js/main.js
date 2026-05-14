@@ -8,79 +8,99 @@ const searchInput = document.getElementById('searchInput');
 const filterCategory = document.getElementById('filterCategory');
 const results = document.getElementById('results');
 
-function escapeRegExp(value) {
-  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+// экранирует спецсимволы для безопасного поиска в RegExp
+function escapeRegExp(s) {
+  return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
-function matchesWord(text, token) {
-  const pattern = new RegExp(
-    `(^|[^\\p{L}\\p{N}])${escapeRegExp(token)}([^\\p{L}\\p{N}]|$)`,
+// проверяет, встречается ли слово в тексте как отдельное слово (учёт кириллицы)
+function matchesWord(text, word) {
+  const re = new RegExp(
+    `(^|[^\\p{L}\\p{N}])${escapeRegExp(word)}([^\\p{L}\\p{N}]|$)`,
     'iu'
   );
-  return pattern.test(text);
+  return re.test(text);
 }
 
-function getCatScenes() {
-  if (!container) return [];
-  return Array.from(container.querySelectorAll('.scene.cat-card'));
+// список карточек кошек в контейнере
+function catScenes() {
+  return container ? [...container.querySelectorAll('.scene.cat-card')] : [];
 }
 
+// показывает/скрывает карточки по строке поиска и категории (1 / 2), обновляет счётчик
 function applyFilters() {
   if (!results || !searchInput || !filterCategory) return;
 
-  const query = searchInput.value.trim().toLowerCase();
-  const queryTokens = query.split(/\s+/).filter(Boolean);
-  const selectedCategory = filterCategory.value;
-  let visibleCount = 0;
+  const tokens = searchInput.value.trim().toLowerCase().split(/\s+/).filter(Boolean);
+  const category = filterCategory.value;
+  let n = 0;
 
-  getCatScenes().forEach((scene) => {
-    const h1Text = scene.querySelector('h1')?.textContent?.toLowerCase() || '';
-    const pText = scene.querySelector('p')?.textContent?.toLowerCase() || '';
-    const idText = (scene.id || '').toLowerCase();
-    const contentText = `${h1Text} ${pText}`;
+  catScenes().forEach((scene) => {
+    const title = scene.querySelector('h1')?.textContent?.toLowerCase() ?? '';
+    const desc = scene.querySelector('p')?.textContent?.toLowerCase() ?? '';
+    const blob = `${title} ${desc}`;
+    const id = (scene.id || '').toLowerCase();
 
-    const matchesSearch =
-      queryTokens.length === 0 ||
-      queryTokens.every(
-        (token) => matchesWord(contentText, token) || idText.includes(token)
-      );
-    const categoryId = scene.dataset.categoryId ?? '';
-    const matchesCategory =
-      selectedCategory === 'all' || String(categoryId) === selectedCategory;
-    const isVisible = matchesSearch && matchesCategory;
+    const okSearch =
+      tokens.length === 0 ||
+      tokens.every((t) => matchesWord(blob, t) || id.includes(t));
+    const cat = scene.dataset.categoryId ?? '';
+    const okCat = category === 'all' || String(cat) === category;
+    const show = okSearch && okCat;
 
-    scene.hidden = !isVisible;
-    if (isVisible) visibleCount += 1;
+    scene.hidden = !show;
+    if (show) n += 1;
   });
 
   results.textContent =
-    visibleCount > 0
-      ? `Найдено: ${visibleCount}`
-      : 'Ничего не найдено. Попробуйте другой запрос.';
-
+    n > 0 ? `Найдено: ${n}` : 'Ничего не найдено. Попробуйте другой запрос.';
   ScrollTrigger.refresh(true);
 }
 
+// подписка на поле поиска и селект категории
 function initFilters() {
   if (!searchInput || !filterCategory || !results) return;
   searchInput.addEventListener('input', applyFilters);
   filterCategory.addEventListener('change', applyFilters);
 }
 
-function animateCards() {
-  if (!container) return;
-  const cards = container.querySelectorAll('.cat-card');
-  if (!cards.length) return;
-  gsap.set(cards, { opacity: 0, y: 36 });
-  gsap.to(cards, {
-    opacity: 1,
-    y: 0,
-    duration: 0.6,
-    stagger: 0.15,
-    ease: 'power2.out',
-  });
+// плавное появление карточек снизу; по окончании — колбэк (параллакс текста)
+function animateCards(nodes, onDone) {
+  if (!nodes?.length) {
+    onDone?.();
+    return;
+  }
+  gsap.timeline({ onComplete: onDone }).fromTo(
+    nodes,
+    { opacity: 0, y: 36 },
+    { opacity: 1, y: 0, duration: 0.6, stagger: 0.15, ease: 'power2.out' }
+  );
 }
 
+// разная скорость смещения заголовка и абзаца при скролле секции
+function setupTextParallax(scenes) {
+  scenes.forEach((scene) => {
+    const h1 = scene.querySelector('.back');
+    const p = scene.querySelector('.mid');
+    if (!h1 || !p) return;
+
+    gsap
+      .timeline({
+        scrollTrigger: {
+          trigger: scene,
+          start: 'top bottom',
+          end: 'bottom top',
+          scrub: 0.5,
+          invalidateOnRefresh: true,
+        },
+      })
+      .fromTo(h1, { y: 48 }, { y: -120, ease: 'none', duration: 1 }, 0)
+      .fromTo(p, { y: 24 }, { y: -56, ease: 'none', duration: 1 }, 0);
+  });
+  ScrollTrigger.refresh(true);
+}
+
+// полоса прогресса, параллакс котиков на первом экране
 function initScrollAnimations() {
   gsap.to('.progress-bar', {
     width: '100%',
@@ -94,54 +114,49 @@ function initScrollAnimations() {
     },
   });
 
-  gsap.to('#cat1', {
-    y: 300,
-    rotation: -360,
-    scrollTrigger: {
-      trigger: '#welcome',
-      start: 'top top',
-      end: 'bottom top',
-      scrub: 3,
-    },
-  });
-
-  gsap.to('#cat2', {
-    y: 300,
-    rotation: 360,
-    scrollTrigger: {
-      trigger: '#welcome',
-      start: 'top top',
-      end: 'bottom top',
-      scrub: 3,
-    },
+  [
+    ['#cat1', -360],
+    ['#cat2', 360],
+  ].forEach(([selector, rotation]) => {
+    gsap.to(selector, {
+      y: 300,
+      rotation,
+      scrollTrigger: {
+        trigger: '#welcome',
+        start: 'top top',
+        end: 'bottom top',
+        scrub: 3,
+      },
+    });
   });
 }
-
+ 
+// загрузка карточек с API, вёрстка, фильтры, анимации
 async function loadCats() {
   if (!container) return;
   try {
-    const response = await fetch('/api/cards');
-    const cats = await response.json();
+    const cats = await (await fetch('/api/cards')).json();
     container.innerHTML = '';
 
     cats.forEach((cat) => {
-      const categoryId = cat.categories_id ?? cat.category_id ?? '';
-      const catHTML = `
-      <section class="scene cat-card" id="cat-${cat.id}" data-category-id="${categoryId}">
+      const catId = cat.categories_id ?? cat.category_id ?? '';
+      container.insertAdjacentHTML(
+        'beforeend',
+        `<section class="scene cat-card" id="cat-${cat.id}" data-category-id="${catId}">
+          <img src="${cat.photo}" class="parallax-cat image-contour cat-img-main size-cat" alt="${cat.title}">
           <div class="content">
-            <img src="${cat.photo}" class="parallax-cat image-contour cat-img-main" alt="${cat.title}">
-            <h1>${cat.title}</h1>
-            <p>${cat.description}</p>
+            <h1 class="back">${cat.title}</h1>
+            <p class="mid">${cat.description}</p>
           </div>
-        </section>
-      `;
-      container.insertAdjacentHTML('beforeend', catHTML);
+        </section>`
+      );
     });
 
-    animateCards();
+    const scenes = container.querySelectorAll('.scene.cat-card');
     applyFilters();
-  } catch (error) {
-    console.error('Ошибка при загрузке котиков на фронтенд:', error);
+    animateCards(scenes, () => setupTextParallax(scenes));
+  } catch (e) {
+    console.error('Ошибка загрузки карточек:', e);
   }
 }
 

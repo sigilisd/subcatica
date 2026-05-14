@@ -4,12 +4,15 @@
     box-sizing: border-box;
 }
 
+html {
+    overflow-x: hidden;
+}
+
 body {
     margin: 0;
     background-color: #121212;
     color: white;
     font-family: sans-serif;
-    overflow-x: hidden;
 }
 
 body::-webkit-scrollbar {
@@ -41,7 +44,32 @@ p {
 .content {
     z-index: 2;
     text-align: center;
-    transform: translateY(-10vh);
+    margin-top: -10vh;
+    position: relative;
+}
+
+#cats-container > .cat-card .content {
+    width: 100%;
+    max-width: 640px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0 clamp(16px, 4vw, 28px);
+    box-sizing: border-box;
+}
+
+#cats-container > .cat-card .parallax-cat {
+    top: auto;
+    bottom: clamp(8px, 4vh, 48px);
+}
+
+#cats-container > .cat-card:nth-child(even) .parallax-cat {
+    left: auto;
+    right: clamp(6px, 4vw, 56px);
+}
+
+#cats-container > .cat-card:nth-child(odd) .parallax-cat {
+    right: auto;
+    left: clamp(6px, 4vw, 56px);
 }
 
 .parallax-cat {
@@ -63,21 +91,15 @@ p {
 }
 
 .image-contour {
-    filter: drop-shadow(3px 0 0 rgb(255, 255, 255)) 
-            drop-shadow(-3px 0 0 rgb(255, 255, 255)) 
-            drop-shadow(0 3px 0 rgb(255, 255, 255)) 
-            drop-shadow(0 -3px 0 rgb(255, 255, 255));
-  }
-
-.size-cat {
-    width: 40vw;    
-    max-width: 800px;  
-    min-width: 200px;   
+    filter: drop-shadow(3px 0 0 rgb(255, 255, 255))
+        drop-shadow(-3px 0 0 rgb(255, 255, 255))
+        drop-shadow(0 3px 0 rgb(255, 255, 255))
+        drop-shadow(0 -3px 0 rgb(255, 255, 255));
 }
 
-.size-skulls {
-    width: 30vw;    
-    max-width: 500px;  
+.size-cat {
+    width: 40vw;
+    max-width: 800px;
     min-width: 200px;
 }
 
@@ -93,12 +115,12 @@ p {
 }
 
 footer {
-    display: flex;          
+    display: flex;
     flex-direction: column;
-    justify-content: center; 
-    align-items: center;    
-    padding: 20px;          
-    background-color: #1a1a1a; 
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    background-color: #1a1a1a;
     width: 100%;
     box-sizing: border-box;
     min-height: 100px;

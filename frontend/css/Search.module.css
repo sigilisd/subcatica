@@ -1,3 +1,4 @@
+/* Панель поиска и фильтра (подключается из style.css) */
 .controls {
     position: sticky;
     top: 10px;
