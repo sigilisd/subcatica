@@ -72,6 +72,46 @@ p {
     left: clamp(6px, 4vw, 56px);
 }
 
+.likes-wrap {
+    display: flex;
+    justify-content: center;
+    margin-top: 1.25rem;
+    position: relative;
+    z-index: 3;
+}
+
+.like-btn {
+    background: #fff;
+    border: 1px solid #ff4d4d;
+    color: #ff4d4d;
+    padding: 8px 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background 0.3s, color 0.3s;
+    font-weight: bold;
+    font-size: 15px;
+}
+
+.like-btn:hover:not(:disabled) {
+    background: #ff4d4d;
+    color: #fff;
+}
+
+.like-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.like-btn.liked {
+    background: #ff4d4d;
+    color: #fff;
+}
+
+.like-btn.liked:hover:not(:disabled) {
+    background: #fff;
+    color: #ff4d4d;
+}
+
 .parallax-cat {
     position: absolute;
     z-index: 1;

@@ -64,6 +64,74 @@ function initFilters() {
   filterCategory.addEventListener('change', applyFilters);
 }
 
+function initLikes() {
+  if (!container) return;
+  container.addEventListener('click', (e) => {
+    const btn = e.target.closest('.like-btn');
+    if (!btn || btn.disabled) return;
+    const id = btn.dataset.catId;
+    if (id) toggleLike(id, btn);
+  });
+}
+
+// уникальный id пользователя в localStorage (один лайк на карточку)
+function getUserUUID() {
+  let uuid = localStorage.getItem('user_cat_uuid');
+  if (!uuid) {
+    uuid = crypto.randomUUID();
+    localStorage.setItem('user_cat_uuid', uuid);
+  }
+  return uuid;
+}
+
+async function markAlreadyLiked() {
+  if (!container) return;
+  try {
+    const res = await fetch(
+      `/api/likes?userUUID=${encodeURIComponent(getUserUUID())}`
+    );
+    if (!res.ok) return;
+    const ids = await res.json();
+    ids.forEach((id) => {
+      const btn = container.querySelector(`.like-btn[data-cat-id="${id}"]`);
+      if (btn) btn.classList.add('liked');
+    });
+  } catch (err) {
+    console.error('Не удалось загрузить лайки пользователя:', err);
+  }
+}
+
+async function toggleLike(id, button) {
+  const liked = button.classList.contains('liked');
+  button.disabled = true;
+
+  try {
+    const response = await fetch(`/api/cards/${id}/like`, {
+      method: liked ? 'DELETE' : 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userUUID: getUserUUID() }),
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      const countSpan = button.querySelector('.likes-count');
+      if (countSpan) countSpan.textContent = data.likes;
+      button.classList.toggle('liked', !liked);
+      gsap.fromTo(button, { scale: 0.85 }, { scale: 1, duration: 0.25, ease: 'back.out(2)' });
+      return;
+    }
+
+    if (!liked && response.status === 403) {
+      button.classList.add('liked');
+    }
+  } catch (err) {
+    console.error('Ошибка лайка:', err);
+  } finally {
+    button.disabled = false;
+  }
+}
+
 // плавное появление карточек снизу; по окончании — колбэк (параллакс текста)
 function animateCards(nodes, onDone) {
   if (!nodes?.length) {
@@ -147,12 +215,18 @@ async function loadCats() {
           <div class="content">
             <h1 class="back">${cat.title}</h1>
             <p class="mid">${cat.description}</p>
+            <div class="likes-wrap">
+              <button type="button" class="like-btn" data-cat-id="${cat.id}">
+                ❤️ <span class="likes-count">${cat.likes ?? 0}</span>
+              </button>
+            </div>
           </div>
         </section>`
       );
     });
 
     const scenes = container.querySelectorAll('.scene.cat-card');
+    await markAlreadyLiked();
     applyFilters();
     animateCards(scenes, () => setupTextParallax(scenes));
   } catch (e) {
@@ -161,5 +235,6 @@ async function loadCats() {
 }
 
 initFilters();
+initLikes();
 initScrollAnimations();
 loadCats();
