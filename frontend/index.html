@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
     <link rel="icon" type="image/png" href="assets/img/icon/icon.png">
     <title>Subcatica</title>
 </head>
@@ -34,6 +35,16 @@
         <p>Copyright 2026 Subcatica</p>
     </footer>
 
+    <div id="mapModal" class="modal" hidden>
+        <div class="modal-content">
+            <button type="button" class="close-btn" id="mapModalClose" aria-label="Закрыть">&times;</button>
+            <h2 id="modalCatName" class="modal-title">Ареал обитания</h2>
+            <p id="mapModalStatus" class="modal-status"></p>
+            <div id="map"></div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
     <script type="module" src="./js/main.js"></script>
 </body>
 </html>

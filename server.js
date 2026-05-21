@@ -108,6 +108,111 @@ app.post('/api/cards/:id/like', async (req, res) => {
   }
 });
 
+// парсинг стран из бд
+function parseCountriesField(row) {
+  const raw = row.countries;
+
+  if (Array.isArray(raw)) {
+    return raw.map((s) => String(s).trim()).filter(Boolean);
+  }
+  if (typeof raw === 'string') {
+    const t = raw.trim();
+    if (!t) return [];
+    if (t.startsWith('[')) {
+      try {
+        const arr = JSON.parse(t);
+        if (Array.isArray(arr)) {
+          return arr.map((s) => String(s).trim()).filter(Boolean);
+        }
+      } catch {
+        // строка с запятыми
+      }
+    }
+    return t.split(/[,;|]/).map((s) => s.trim()).filter(Boolean);
+  }
+  return [];
+}
+
+function normalizeCat(row) {
+  return {
+    id: row.id,
+    title: row.title,
+    description: row.description,
+    photo: row.photo,
+    categories_id: row.categories_id ?? row.category_id,
+    likes: row.likes ?? 0,
+    countries: parseCountriesField(row),
+  };
+}
+
+app.get('/api/cards/:id', async (req, res) => {
+  const id = Number.parseInt(req.params.id, 10);
+  if (Number.isNaN(id)) {
+    return res.status(400).json({ error: 'Некорректный id' });
+  }
+  try {
+    const { rows } = await pool.query('SELECT * FROM cats WHERE id = $1', [id]);
+    if (rows.length === 0) {
+      return res.status(404).json({ error: 'Кошка не найдена' });
+    }
+    res.json(normalizeCat(rows[0]));
+  } catch (err) {
+    console.error('БД GET /api/cards/:id:', err);
+    res.status(500).json({ error: 'Ошибка сервера' });
+  }
+});
+
+async function geocodeCountry(country) {
+  const url = new URL('https://nominatim.openstreetmap.org/search');
+  
+  url.searchParams.set('q', country);
+  url.searchParams.set('format', 'json');
+  url.searchParams.set('limit', '1');
+
+  url.searchParams.set('accept-language', 'ru');
+
+  const response = await fetch(url, {
+    headers: {
+      'User-Agent': 'Subcatica/1.0 (educational project)',
+      'Accept-Language': 'ru',
+    },
+  });
+
+  if (!response.ok) return null;
+  const data = await response.json();
+  if (!data?.length) return null;
+
+  return {
+    country,
+    lat: Number.parseFloat(data[0].lat),
+    lon: Number.parseFloat(data[0].lon),
+  };
+}
+
+app.post('/api/geocode', async (req, res) => {
+  const list = req.body?.countries;
+  if (!Array.isArray(list) || list.length === 0) {
+    return res.status(400).json({ error: 'Нужен массив countries' });
+  }
+
+  const countries = [...new Set(list.map((s) => String(s).trim()).filter(Boolean))];
+  const points = [];
+
+  try {
+    for (let i = 0; i < countries.length; i += 1) {
+      if (i > 0) {
+        await new Promise((r) => setTimeout(r, 1100));
+      }
+      const point = await geocodeCountry(countries[i]);
+      if (point) points.push(point);
+    }
+    res.json({ points });
+  } catch (err) {
+    console.error('Геокодирование:', err);
+    res.status(500).json({ error: 'Ошибка геокодирования' });
+  }
+});
+
 app.delete('/api/cards/:id/like', async (req, res) => {
   const params = parseLikeParams(req, res);
   if (!params) return;
@@ -140,7 +245,6 @@ app.delete('/api/cards/:id/like', async (req, res) => {
   }
 });
 
-// SPA: всё остальное — index.html
 app.get('/{*splat}', (req, res) => {
   res.sendFile(path.join(distPath, 'index.html'));
 });

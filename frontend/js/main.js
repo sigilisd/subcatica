@@ -74,6 +74,165 @@ function initLikes() {
   });
 }
 
+function parseCountries(raw) {
+  if (!raw) return [];
+  if (Array.isArray(raw)) {
+    return raw.map((s) => String(s).trim()).filter(Boolean);
+  }
+  if (typeof raw === 'string') {
+    const t = raw.trim();
+    if (!t) return [];
+    if (t.startsWith('[')) {
+      try {
+        const arr = JSON.parse(t);
+        if (Array.isArray(arr)) {
+          return arr.map((s) => String(s).trim()).filter(Boolean);
+        }
+      } catch {
+        /* ниже — разбор через запятую */
+      }
+    }
+    return t.split(/[,;|]/).map((s) => s.trim()).filter(Boolean);
+  }
+  return [];
+}
+
+let habitatMap = null;
+let habitatMarkers = [];
+
+function initMapModal() {
+  const modal = document.getElementById('mapModal');
+  const closeBtn = document.getElementById('mapModalClose');
+  const mapEl = document.getElementById('map');
+  if (!modal || !mapEl || typeof L === 'undefined') return;
+
+  habitatMap = L.map(mapEl).setView([20, 0], 2);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap',
+  }).addTo(habitatMap);
+
+  closeBtn?.addEventListener('click', closeMapModal);
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) closeMapModal();
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !modal.hidden) closeMapModal();
+  });
+}
+
+function openMapModal() {
+  const modal = document.getElementById('mapModal');
+  if (!modal) return;
+  modal.hidden = false;
+  document.body.style.overflow = 'hidden';
+  requestAnimationFrame(() => habitatMap?.invalidateSize());
+  setTimeout(() => habitatMap?.invalidateSize(), 200);
+}
+
+function closeMapModal() {
+  const modal = document.getElementById('mapModal');
+  if (!modal) return;
+  modal.hidden = true;
+  document.body.style.overflow = '';
+}
+
+function clearMapMarkers() {
+  if (!habitatMap) return;
+  habitatMarkers.forEach((m) => habitatMap.removeLayer(m));
+  habitatMarkers = [];
+}
+
+function setMapStatus(text) {
+  const el = document.getElementById('mapModalStatus');
+  if (el) el.textContent = text ?? '';
+}
+
+async function showHabitatOnMap(catId, catTitle) {
+  if (!habitatMap) return;
+
+  openMapModal();
+  setMapStatus('Загрузка…');
+  clearMapMarkers();
+
+  const titleEl = document.getElementById('modalCatName');
+  if (titleEl) {
+    titleEl.textContent = catTitle
+      ? `Где обитает: ${catTitle}`
+      : 'Ареал обитания';
+  }
+
+  try {
+    const catRes = await fetch(`/api/cards/${catId}`);
+    if (!catRes.ok) throw new Error('Карточка не найдена');
+    const cat = await catRes.json();
+    const countries = parseCountries(cat.countries);
+
+    if (!countries.length) {
+      setMapStatus('Страны для этой кошки не указаны в базе данных.');
+      habitatMap.setView([20, 0], 2);
+      return;
+    }
+
+    setMapStatus('Поиск координат…');
+
+    const geoRes = await fetch('/api/geocode', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ countries }),
+    });
+
+    if (!geoRes.ok) throw new Error('Ошибка геокодирования');
+    const { points } = await geoRes.json();
+
+    if (!points?.length) {
+      setMapStatus('Не удалось найти координаты для указанных стран.');
+      habitatMap.setView([20, 0], 2);
+      return;
+    }
+
+    const bounds = [];
+    const name = cat.title ?? catTitle ?? 'Кошка';
+
+    points.forEach(({ country, lat, lon }) => {
+      const marker = L.marker([lat, lon])
+        .addTo(habitatMap)
+        .bindPopup(`<b>${name}</b><br>${country}`);
+      habitatMarkers.push(marker);
+      bounds.push([lat, lon]);
+    });
+
+    if (bounds.length === 1) {
+      habitatMap.flyTo(bounds[0], 4);
+    } else {
+      habitatMap.fitBounds(bounds, { padding: [40, 40], maxZoom: 5 });
+    }
+
+    setMapStatus(
+      points.length < countries.length
+        ? `Найдено ${points.length} из ${countries.length} стран.`
+        : ''
+    );
+  } catch (err) {
+    console.error('Карта:', err);
+    setMapStatus('Не удалось загрузить карту. Попробуйте позже.');
+  } finally {
+    requestAnimationFrame(() => habitatMap?.invalidateSize());
+  }
+}
+
+function initCatMapClicks() {
+  if (!container) return;
+  container.addEventListener('click', (e) => {
+    const img = e.target.closest('.cat-card__media img');
+    if (!img) return;
+    const section = img.closest('.cat-card');
+    const catId = section?.id?.replace(/^cat-/, '');
+    if (!catId) return;
+    const title = section.querySelector('h1')?.textContent?.trim() ?? '';
+    showHabitatOnMap(catId, title);
+  });
+}
+
 // уникальный id пользователя в localStorage (один лайк на карточку)
 function getUserUUID() {
   let uuid = localStorage.getItem('user_cat_uuid');
@@ -211,7 +370,9 @@ async function loadCats() {
       container.insertAdjacentHTML(
         'beforeend',
         `<section class="scene cat-card" id="cat-${cat.id}" data-category-id="${catId}">
-          <img src="${cat.photo}" class="parallax-cat image-contour cat-img-main size-cat" alt="${cat.title}">
+          <div class="cat-card__media">
+            <img src="${cat.photo}?v=${Date.now()}" class="parallax-cat image-contour cat-img-main size-cat cat-map-trigger" alt="${cat.title}" title="Показать ареал на карте">
+          </div>
           <div class="content">
             <h1 class="back">${cat.title}</h1>
             <p class="mid">${cat.description}</p>
@@ -236,5 +397,7 @@ async function loadCats() {
 
 initFilters();
 initLikes();
+initMapModal();
+initCatMapClicks();
 initScrollAnimations();
 loadCats();
