@@ -1,5 +1,7 @@
+import '../css/style.css';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { initQuiz } from './quiz.js';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -8,12 +10,23 @@ const searchInput = document.getElementById('searchInput');
 const filterCategory = document.getElementById('filterCategory');
 const results = document.getElementById('results');
 
-// экранирует спецсимволы для безопасного поиска в RegExp
+function escHtml(s) {
+  const el = document.createElement('div');
+  el.textContent = String(s ?? '');
+  return el.innerHTML;
+}
+
+function escAttr(s) {
+  return String(s ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/"/g, '&quot;')
+    .replace(/</g, '&lt;');
+}
+
 function escapeRegExp(s) {
   return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
-// проверяет, встречается ли слово в тексте как отдельное слово (учёт кириллицы)
 function matchesWord(text, word) {
   const re = new RegExp(
     `(^|[^\\p{L}\\p{N}])${escapeRegExp(word)}([^\\p{L}\\p{N}]|$)`,
@@ -22,12 +35,10 @@ function matchesWord(text, word) {
   return re.test(text);
 }
 
-// список карточек кошек в контейнере
 function catScenes() {
   return container ? [...container.querySelectorAll('.scene.cat-card')] : [];
 }
 
-// показывает/скрывает карточки по строке поиска и категории (1 / 2), обновляет счётчик
 function applyFilters() {
   if (!results || !searchInput || !filterCategory) return;
 
@@ -57,7 +68,6 @@ function applyFilters() {
   ScrollTrigger.refresh(true);
 }
 
-// подписка на поле поиска и селект категории
 function initFilters() {
   if (!searchInput || !filterCategory || !results) return;
   searchInput.addEventListener('input', applyFilters);
@@ -75,24 +85,9 @@ function initLikes() {
 }
 
 function parseCountries(raw) {
-  if (!raw) return [];
-  if (Array.isArray(raw)) {
-    return raw.map((s) => String(s).trim()).filter(Boolean);
-  }
-  if (typeof raw === 'string') {
-    const t = raw.trim();
-    if (!t) return [];
-    if (t.startsWith('[')) {
-      try {
-        const arr = JSON.parse(t);
-        if (Array.isArray(arr)) {
-          return arr.map((s) => String(s).trim()).filter(Boolean);
-        }
-      } catch {
-        /* ниже — разбор через запятую */
-      }
-    }
-    return t.split(/[,;|]/).map((s) => s.trim()).filter(Boolean);
+  if (Array.isArray(raw)) return raw;
+  if (typeof raw === 'string' && raw.trim()) {
+    return raw.split(/[,;|]/).map((s) => s.trim()).filter(Boolean);
   }
   return [];
 }
@@ -163,7 +158,7 @@ async function showHabitatOnMap(catId, catTitle) {
 
   try {
     const catRes = await fetch(`/api/cards/${catId}`);
-    if (!catRes.ok) throw new Error('Карточка не найдена');
+    if (!catRes.ok) throw new Error('not found');
     const cat = await catRes.json();
     const countries = parseCountries(cat.countries);
 
@@ -181,7 +176,7 @@ async function showHabitatOnMap(catId, catTitle) {
       body: JSON.stringify({ countries }),
     });
 
-    if (!geoRes.ok) throw new Error('Ошибка геокодирования');
+    if (!geoRes.ok) throw new Error('geocode');
     const { points } = await geoRes.json();
 
     if (!points?.length) {
@@ -194,9 +189,8 @@ async function showHabitatOnMap(catId, catTitle) {
     const name = cat.title ?? catTitle ?? 'Кошка';
 
     points.forEach(({ country, lat, lon }) => {
-      const marker = L.marker([lat, lon])
-        .addTo(habitatMap)
-        .bindPopup(`<b>${name}</b><br>${country}`);
+      const marker = L.marker([lat, lon]).addTo(habitatMap);
+      marker.bindPopup(`${name} — ${country}`);
       habitatMarkers.push(marker);
       bounds.push([lat, lon]);
     });
@@ -233,7 +227,6 @@ function initCatMapClicks() {
   });
 }
 
-// уникальный id пользователя в localStorage (один лайк на карточку)
 function getUserUUID() {
   let uuid = localStorage.getItem('user_cat_uuid');
   if (!uuid) {
@@ -256,7 +249,7 @@ async function markAlreadyLiked() {
       if (btn) btn.classList.add('liked');
     });
   } catch (err) {
-    console.error('Не удалось загрузить лайки пользователя:', err);
+    console.error('Лайки:', err);
   }
 }
 
@@ -285,13 +278,12 @@ async function toggleLike(id, button) {
       button.classList.add('liked');
     }
   } catch (err) {
-    console.error('Ошибка лайка:', err);
+    console.error('Лайк:', err);
   } finally {
     button.disabled = false;
   }
 }
 
-// плавное появление карточек снизу; по окончании — колбэк (параллакс текста)
 function animateCards(nodes, onDone) {
   if (!nodes?.length) {
     onDone?.();
@@ -304,7 +296,6 @@ function animateCards(nodes, onDone) {
   );
 }
 
-// разная скорость смещения заголовка и абзаца при скролле секции
 function setupTextParallax(scenes) {
   scenes.forEach((scene) => {
     const h1 = scene.querySelector('.back');
@@ -327,7 +318,6 @@ function setupTextParallax(scenes) {
   ScrollTrigger.refresh(true);
 }
 
-// полоса прогресса, параллакс котиков на первом экране
 function initScrollAnimations() {
   gsap.to('.progress-bar', {
     width: '100%',
@@ -357,8 +347,7 @@ function initScrollAnimations() {
     });
   });
 }
- 
-// загрузка карточек с API, вёрстка, фильтры, анимации
+
 async function loadCats() {
   if (!container) return;
   try {
@@ -371,11 +360,11 @@ async function loadCats() {
         'beforeend',
         `<section class="scene cat-card" id="cat-${cat.id}" data-category-id="${catId}">
           <div class="cat-card__media">
-            <img src="${cat.photo}?v=${Date.now()}" class="parallax-cat image-contour cat-img-main size-cat cat-map-trigger" alt="${cat.title}" title="Показать ареал на карте">
+            <img src="${escAttr(cat.photo)}" class="parallax-cat image-contour cat-img-main size-cat" alt="${escAttr(cat.title)}" title="Показать ареал на карте">
           </div>
           <div class="content">
-            <h1 class="back">${cat.title}</h1>
-            <p class="mid">${cat.description}</p>
+            <h1 class="back">${escHtml(cat.title)}</h1>
+            <p class="mid">${escHtml(cat.description)}</p>
             <div class="likes-wrap">
               <button type="button" class="like-btn" data-cat-id="${cat.id}">
                 ❤️ <span class="likes-count">${cat.likes ?? 0}</span>
@@ -391,12 +380,13 @@ async function loadCats() {
     applyFilters();
     animateCards(scenes, () => setupTextParallax(scenes));
   } catch (e) {
-    console.error('Ошибка загрузки карточек:', e);
+    console.error('Карточки:', e);
   }
 }
 
 initFilters();
 initLikes();
+initQuiz();
 initMapModal();
 initCatMapClicks();
 initScrollAnimations();

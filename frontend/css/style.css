@@ -268,6 +268,109 @@ p {
     z-index: 0;
 }
 
+.modal-content--quiz {
+    width: min(92vw, 520px);
+    max-height: 85vh;
+}
+
+.quiz-progress {
+    text-align: center;
+    margin: 0 0 16px;
+    font-size: 0.9rem;
+    color: #666;
+    min-height: 1.2em;
+}
+
+.quiz-body {
+    min-height: 120px;
+}
+
+.quiz-question {
+    font-size: 1.1rem;
+    line-height: 1.5;
+    margin: 0 0 20px;
+    text-align: center;
+}
+
+.quiz-answers {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.quiz-answer {
+    width: 100%;
+    padding: 12px 16px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    background: #f5f5f5;
+    color: #121212;
+    font-size: 15px;
+    cursor: pointer;
+    text-align: left;
+    transition: background 0.2s, border-color 0.2s;
+}
+
+.quiz-answer:hover {
+    background: #eee;
+    border-color: #888;
+}
+
+.quiz-loading,
+.quiz-error {
+    text-align: center;
+    color: #555;
+    margin: 1rem 0;
+}
+
+.quiz-result {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 14px;
+}
+
+.quiz-result-img {
+    width: min(100%, 280px);
+    max-height: 220px;
+    height: auto;
+    object-fit: contain;
+    display: block;
+    filter: drop-shadow(3px 0 0 rgb(255, 255, 255))
+        drop-shadow(-3px 0 0 rgb(255, 255, 255))
+        drop-shadow(0 3px 0 rgb(255, 255, 255))
+        drop-shadow(0 -3px 0 rgb(255, 255, 255));
+}
+
+.quiz-result-title {
+    margin: 0;
+    font-size: 1.35rem;
+}
+
+.quiz-result-text {
+    margin: 0;
+    line-height: 1.55;
+    color: #333;
+    max-width: 100%;
+}
+
+.quiz-restart {
+    margin-top: 8px;
+    padding: 10px 20px;
+    border-radius: 20px;
+    border: 1px solid #ff4d4d;
+    background: #fff;
+    color: #ff4d4d;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.quiz-restart:hover {
+    background: #ff4d4d;
+    color: #fff;
+}
+
 .progress-bar {
     position: fixed;
     top: 0;

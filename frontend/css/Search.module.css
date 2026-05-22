@@ -1,13 +1,13 @@
-/* Панель поиска и фильтра (подключается из style.css) */
 .controls {
     position: sticky;
     top: 10px;
     z-index: 1000;
     display: flex;
+    flex-wrap: wrap;
     gap: 10px;
     justify-content: center;
     align-items: center;
-    width: min(900px, calc(100% - 24px));
+    width: min(1100px, calc(100% - 24px));
     margin: 12px auto 4px;
     padding: 10px;
     border: 1px solid #333;
@@ -17,7 +17,8 @@
 }
 
 .controls input,
-.controls select {
+.controls select,
+.quiz-open-btn {
     height: 42px;
     padding: 0 12px;
     border-radius: 8px;
@@ -25,6 +26,19 @@
     background-color: #1f1f1f;
     color: #fff;
     font-size: 15px;
+}
+
+.quiz-open-btn {
+    flex-shrink: 0;
+    cursor: pointer;
+    white-space: nowrap;
+    background: rgba(31, 31, 31, 0.95);
+    transition: background 0.2s, border-color 0.2s;
+}
+
+.quiz-open-btn:hover {
+    background: #2a2a2a;
+    border-color: #555;
 }
 
 #searchInput {
@@ -37,7 +51,7 @@
 }
 
 .results-count {
-    width: min(900px, calc(100% - 24px));
+    width: min(1100px, calc(100% - 24px));
     margin: 0 auto 8px;
     color: #c9c9c9;
     font-size: 14px;
