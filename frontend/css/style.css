@@ -73,11 +73,25 @@ p {
     justify-content: center;
     align-items: center;
     position: relative;
-    border-bottom: 1px solid #333;
+    /* border-bottom: 1px solid #333; */
 }
 
 .scene[hidden] {
     display: none !important;
+}
+
+.scene.cat-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    overflow: hidden;
+    width: 100%;
+}
+
+.scene.cat-card .cat-card__media,
+.scene.cat-card .content {
+    visibility: hidden;
+    will-change: transform, opacity;
 }
 
 .content {
@@ -239,6 +253,7 @@ p {
 
 .modal {
     display: flex;
+    text-align: center;
     align-items: center;
     justify-content: center;
     position: fixed;
@@ -256,6 +271,7 @@ p {
 }
 
 .modal-content {
+    text-align: center;
     background-color: #fff;
     color: #121212;
     margin: 0;

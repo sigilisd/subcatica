@@ -288,38 +288,40 @@ async function toggleLike(id, button) {
   }
 }
 
-function animateCards(nodes, onDone) {
-  if (!nodes?.length) {
+function animateCards(scenes, onDone) {
+  if (!scenes?.length) {
     onDone?.();
     return;
   }
-  gsap.timeline({ onComplete: onDone }).fromTo(
-    nodes,
-    { opacity: 0, y: 36 },
-    { opacity: 1, y: 0, duration: 0.6, stagger: 0.15, ease: 'power2.out' }
-  );
-}
 
-function setupTextParallax(scenes) {
   scenes.forEach((scene) => {
-    const h1 = scene.querySelector('.back');
-    const p = scene.querySelector('.mid');
-    if (!h1 || !p) return;
+    const media = scene.querySelector('.cat-card__media');
+    const content = scene.querySelector('.content');
+    
+    if (!media || !content) return;
 
-    gsap
-      .timeline({
-        scrollTrigger: {
-          trigger: scene,
-          start: 'top bottom',
-          end: 'bottom top',
-          scrub: 0.5,
-          invalidateOnRefresh: true,
-        },
-      })
-      .fromTo(h1, { y: 48 }, { y: -120, ease: 'none', duration: 1 }, 0)
-      .fromTo(p, { y: 24 }, { y: -56, ease: 'none', duration: 1 }, 0);
+    gsap.timeline({
+      scrollTrigger: {
+        trigger: scene,
+        start: 'top 40%',
+        toggleActions: 'play none none none',
+        invalidateOnRefresh: true
+      }
+    })
+
+    .fromTo(media, 
+      { xPercent: -30, autoAlpha: 0 },
+      { xPercent: 0, autoAlpha: 1, duration: 1.2, ease: 'expo.out' }
+    )
+
+    .fromTo(content, 
+      { xPercent: 30, autoAlpha: 0 },
+      { xPercent: 0, autoAlpha: 1, duration: 1.2, ease: 'expo.out' },
+      '<Pre'
+    );
   });
-  ScrollTrigger.refresh(true);
+
+  onDone?.();
 }
 
 function initScrollAnimations() {
