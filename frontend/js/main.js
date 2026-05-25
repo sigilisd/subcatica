@@ -60,6 +60,22 @@ function initFilters() {
   if (!searchInput || !filterCategory || !results) return;
   searchInput.addEventListener('input', applyFilters);
   filterCategory.addEventListener('change', applyFilters);
+
+  searchInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      const firstVisibleCat = container?.querySelector('.scene.cat-card:not([hidden])');
+      if (firstVisibleCat) {
+        firstVisibleCat.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        
+        // Быстрый визуальный отклик карточки
+        gsap.fromTo(firstVisibleCat, 
+          { scale: 1 }, 
+          { scale: 1.02, duration: 0.3, yoyo: true, repeat: 1, ease: 'power1.inOut' }
+        );
+      }
+    }
+  });
 }
 
 function initLikes() {
