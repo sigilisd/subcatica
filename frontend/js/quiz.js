@@ -1,17 +1,6 @@
+import { escHtml, escAttr } from './utils.js';
+
 const QUIZ_CATEGORIES = ['house', 'wild', 'extinct'];
-
-function escHtml(s) {
-  const el = document.createElement('div');
-  el.textContent = String(s ?? '');
-  return el.innerHTML;
-}
-
-function escAttr(s) {
-  return String(s ?? '')
-    .replace(/&/g, '&amp;')
-    .replace(/"/g, '&quot;')
-    .replace(/</g, '&lt;');
-}
 
 const modal = document.getElementById('quizModal');
 const openBtn = document.getElementById('quizOpenBtn');

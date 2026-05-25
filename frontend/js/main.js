@@ -2,6 +2,7 @@ import '../css/style.css';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { initQuiz } from './quiz.js';
+import { escHtml, escAttr } from './utils.js';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -9,19 +10,6 @@ const container = document.getElementById('cats-container');
 const searchInput = document.getElementById('searchInput');
 const filterCategory = document.getElementById('filterCategory');
 const results = document.getElementById('results');
-
-function escHtml(s) {
-  const el = document.createElement('div');
-  el.textContent = String(s ?? '');
-  return el.innerHTML;
-}
-
-function escAttr(s) {
-  return String(s ?? '')
-    .replace(/&/g, '&amp;')
-    .replace(/"/g, '&quot;')
-    .replace(/</g, '&lt;');
-}
 
 function escapeRegExp(s) {
   return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');

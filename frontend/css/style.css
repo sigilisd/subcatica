@@ -1,5 +1,13 @@
 @import "./Search.module.css";
 
+@font-face {
+    font-family: 'Balkara';
+    src: url('../public/assets/fonts/ofont.ru_Balkara%20Condensed.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
 * {
     box-sizing: border-box;
 }
@@ -12,11 +20,42 @@ body {
     margin: 0;
     background-color: #121212;
     color: white;
-    font-family: sans-serif;
+    font-family: 'Balkara';
 }
 
 body::-webkit-scrollbar {
     display: none;
+}
+
+h1 {
+    font-family: 'Balkara';
+    font-size: 100px;
+    font-weight: normal;
+    margin-bottom: 20px;
+}
+
+#welcome {
+    height: 100vh;
+    max-height: 100vh;
+    overflow: hidden;
+    box-sizing: border-box;
+}
+
+#welcome h1 {
+    transform: translateY(-5vh);
+    margin: 0;
+    text-align: center;
+}
+
+#welcome .content {
+    margin-top: 0;
+}
+
+.controls,
+.controls button,
+.controls input,
+.controls select {
+    font-family: 'Balkara', sans-serif;
 }
 
 p {
@@ -271,6 +310,12 @@ p {
 .modal-content--quiz {
     width: min(92vw, 520px);
     max-height: 85vh;
+    text-align: center;
+}
+
+.modal-content--quiz .modal-title {
+    text-align: center;
+    margin-right: 0;
 }
 
 .quiz-progress {
@@ -283,31 +328,38 @@ p {
 
 .quiz-body {
     min-height: 120px;
+    text-align: center;
 }
 
 .quiz-question {
     font-size: 1.1rem;
     line-height: 1.5;
-    margin: 0 0 20px;
+    margin: 0 auto 20px;
+    max-width: 100%;
     text-align: center;
 }
 
 .quiz-answers {
     display: flex;
     flex-direction: column;
+    align-items: center;
     gap: 10px;
+    width: 100%;
 }
 
 .quiz-answer {
     width: 100%;
+    max-width: 100%;
     padding: 12px 16px;
     border-radius: 10px;
     border: 1px solid #ccc;
     background: #f5f5f5;
     color: #121212;
-    font-size: 15px;
+    font-family: 'Balkara', sans-serif;
+    font-size: 1.05rem;
+    font-weight: normal;
     cursor: pointer;
-    text-align: left;
+    text-align: center;
     transition: background 0.2s, border-color 0.2s;
 }
 
@@ -349,10 +401,11 @@ p {
 }
 
 .quiz-result-text {
-    margin: 0;
+    margin: 0 auto;
     line-height: 1.55;
     color: #333;
     max-width: 100%;
+    text-align: center;
 }
 
 .quiz-restart {
@@ -362,7 +415,8 @@ p {
     border: 1px solid #ff4d4d;
     background: #fff;
     color: #ff4d4d;
-    font-weight: bold;
+    font-family: 'Balkara', sans-serif;
+    font-weight: normal;
     cursor: pointer;
 }
 
