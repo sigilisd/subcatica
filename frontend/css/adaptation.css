@@ -1,0 +1,251 @@
+@media (max-width: 900px) {
+
+  h1 {
+    font-size: clamp(42px, 10vw, 80px);
+  }
+
+  #cat1 {
+    width: 180px;
+    left: 4%;
+    top: 30%;
+  }
+
+  #cat2 {
+    width: 250px;
+    right: 4%;
+    top: 30%;
+  }
+
+  #cats-container > .cat-card {
+    column-gap: clamp(8px, 2vw, 20px);
+    padding: 0 clamp(8px, 3vw, 24px);
+    min-height: 80vh;
+  }
+
+  #cats-container > .cat-card .parallax-cat.size-cat {
+    width: min(100%, 46vw);
+    max-height: min(55vh, 420px);
+  }
+
+  p {
+    font-size: 0.95rem;
+    max-width: 100%;
+  }
+
+  #map {
+    height: 340px;
+  }
+
+  .controls {
+    gap: 8px;
+  }
+}
+
+@media (max-width: 600px) {
+
+  .controls {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    padding: 10px 14px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: #121212;
+    border-bottom: 1px solid #2a2a2a;
+    box-sizing: border-box;
+    width: 100%;
+  }
+
+  .controls input[type="text"],
+  .controls select {
+    width: 100%;
+    box-sizing: border-box;
+    font-size: 16px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: 1px solid #333;
+    background: #1e1e1e;
+    color: #fff;
+  }
+
+  .controls select {
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23aaa' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 32px;
+  }
+
+  #results {
+    padding: 4px 14px 8px;
+    font-size: 0.85rem;
+    color: #888;
+  }
+
+  #welcome h1 {
+    font-size: clamp(32px, 12vw, 56px);
+    transform: none;
+  }
+
+  #cat1 {
+    width: 110px;
+    left: 2%;
+    top: auto;
+    bottom: 15%;
+    opacity: 0.6;
+  }
+
+  #cat2 {
+    width: 140px;
+    right: 2%;
+    top: auto;
+    bottom: 10%;
+    opacity: 0.6;
+  }
+
+  #cats-container > .cat-card {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 20px;
+    padding: 32px 16px 40px;
+    min-height: auto;
+    height: auto;
+    border-bottom: 1px solid #2a2a2a;
+  }
+
+  #cats-container > .cat-card .cat-card__media {
+    width: 100%;
+    max-width: 360px;
+    order: 1;
+  }
+ 
+  #cats-container > .cat-card > .content {
+    width: 100%;
+    order: 2;
+    margin: 0 !important;
+    padding: 0 4px !important;
+    text-align: center;
+  }
+
+  #cats-container > .cat-card .parallax-cat.size-cat {
+    width: min(85vw, 320px) !important;
+    max-height: 280px !important;
+    height: auto;
+    min-width: unset;
+  }
+
+  #cats-container > .cat-card h1 {
+    font-size: clamp(22px, 7vw, 38px);
+    margin-bottom: 10px;
+  }
+
+  p {
+    font-size: 0.9rem;
+    max-width: 100%;
+    line-height: 1.65;
+    text-align: left;
+  }
+
+  .likes-wrap {
+    margin-top: 16px;
+  }
+
+  .like-btn {
+    font-size: 14px;
+    padding: 10px 20px;
+  }
+
+  .modal-content {
+    width: 95vw;
+    padding: 18px 14px;
+    max-height: 88vh;
+    border-radius: 14px;
+  }
+
+  .modal-title {
+    font-size: 1.1rem;
+    margin-right: 2rem;
+  }
+
+  .close-btn {
+    right: 12px;
+    top: 10px;
+    font-size: 24px;
+  }
+
+  #map {
+    height: 260px;
+  }
+
+  .modal-content--quiz {
+    width: 95vw;
+    padding: 18px 14px;
+  }
+
+  .quiz-answer {
+    font-size: 0.95rem;
+    padding: 11px 14px;
+  }
+
+  .quiz-result-img {
+    width: min(100%, 220px);
+    max-height: 180px;
+  }
+
+  footer {
+    padding: 16px;
+    text-align: center;
+  }
+
+  footer p {
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 380px) {
+
+  #welcome h1 {
+    font-size: 28px;
+  }
+
+  #cats-container > .cat-card h1 {
+    font-size: 20px;
+  }
+
+  #cats-container > .cat-card .parallax-cat.size-cat {
+    width: 90vw !important;
+    max-height: 240px !important;
+  }
+
+  .controls input[type="text"],
+  .controls select {
+    font-size: 15px;
+    padding: 9px 12px;
+  }
+
+  .modal-content {
+    padding: 14px 10px;
+  }
+}
+
+@media (max-width: 600px) {
+  .scene:not(.cat-card) {
+    height: auto;
+    min-height: 50vh;
+    padding: 40px 16px;
+  }
+
+  .scene:not(.cat-card) .content {
+    margin-top: 0;
+    padding: 0 4px;
+  }
+
+  .scene:not(.cat-card) h1 {
+    font-size: clamp(22px, 8vw, 44px);
+  }
+}

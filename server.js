@@ -150,28 +150,106 @@ function normalizeQuizResult(row) {
   };
 }
 
+// Статичный fallback: координаты центров стран — используются если Nominatim недоступен
+// const GEO_FALLBACK = {
+//   'россия': [61.5, 105.3], 'russia': [61.5, 105.3],
+//   'китай': [35.9, 104.2], 'china': [35.9, 104.2],
+//   'индия': [20.6, 79.1], 'india': [20.6, 79.1],
+//   'африка': [8.8, 26.8], 'africa': [8.8, 26.8],
+//   'казахстан': [48.0, 68.0], 'kazakhstan': [48.0, 68.0],
+//   'монголия': [46.9, 103.8], 'mongolia': [46.9, 103.8],
+//   'иран': [32.4, 53.7], 'iran': [32.4, 53.7],
+//   'афганистан': [33.9, 67.7], 'afghanistan': [33.9, 67.7],
+//   'пакистан': [30.4, 69.3], 'pakistan': [30.4, 69.3],
+//   'индонезия': [-2.5, 118.0], 'indonesia': [-2.5, 118.0],
+//   'борнео': [1.0, 114.0], 'borneo': [1.0, 114.0],
+//   'малайзия': [4.2, 108.0], 'malaysia': [4.2, 108.0],
+//   'таиланд': [15.9, 100.9], 'thailand': [15.9, 100.9],
+//   'вьетнам': [14.1, 108.3], 'vietnam': [14.1, 108.3],
+//   'бразилия': [-14.2, -51.9], 'brazil': [-14.2, -51.9],
+//   'аргентина': [-38.4, -63.6], 'argentina': [-38.4, -63.6],
+//   'чили': [-35.7, -71.5], 'chile': [-35.7, -71.5],
+//   'перу': [-9.2, -75.0], 'peru': [-9.2, -75.0],
+//   'колумбия': [4.6, -74.3], 'colombia': [4.6, -74.3],
+//   'венесуэла': [6.4, -66.6], 'venezuela': [6.4, -66.6],
+//   'боливия': [-16.3, -63.6], 'bolivia': [-16.3, -63.6],
+//   'парагвай': [-23.4, -58.4], 'paraguay': [-23.4, -58.4],
+//   'уругвай': [-32.5, -55.8], 'uruguay': [-32.5, -55.8],
+//   'мексика': [23.6, -102.6], 'mexico': [23.6, -102.6],
+//   'канада': [56.1, -106.3], 'canada': [56.1, -106.3],
+//   'сша': [37.1, -95.7], 'usa': [37.1, -95.7], 'united states': [37.1, -95.7],
+//   'испания': [40.5, -3.7], 'spain': [40.5, -3.7],
+//   'португалия': [39.4, -8.2], 'portugal': [39.4, -8.2],
+//   'эфиопия': [9.1, 40.5], 'ethiopia': [9.1, 40.5],
+//   'кения': [-0.0, 37.9], 'kenya': [-0.0, 37.9],
+//   'танзания': [-6.4, 34.9], 'tanzania': [-6.4, 34.9],
+//   'южная африка': [-28.5, 24.7], 'south africa': [-28.5, 24.7],
+//   'ангола': [-11.2, 17.9], 'angola': [-11.2, 17.9],
+//   'конго': [-4.0, 21.8], 'congo': [-4.0, 21.8],
+//   'камерун': [3.8, 11.5], 'cameroon': [3.8, 11.5],
+//   'нигерия': [9.1, 8.7], 'nigeria': [9.1, 8.7],
+//   'судан': [12.9, 30.2], 'sudan': [12.9, 30.2],
+//   'египет': [26.8, 30.8], 'egypt': [26.8, 30.8],
+//   'алжир': [28.0, 2.6], 'algeria': [28.0, 2.6],
+//   'марокко': [31.8, -7.1], 'morocco': [31.8, -7.1],
+//   'саудовская аравия': [23.9, 45.1], 'saudi arabia': [23.9, 45.1],
+//   'туркменистан': [40.0, 59.6], 'turkmenistan': [40.0, 59.6],
+//   'узбекистан': [41.4, 64.6], 'uzbekistan': [41.4, 64.6],
+//   'непал': [28.4, 84.1], 'nepal': [28.4, 84.1],
+//   'бутан': [27.5, 90.4], 'bhutan': [27.5, 90.4],
+//   'мьянма': [21.9, 95.9], 'myanmar': [21.9, 95.9],
+// };
+
+const geocodeCache = new Map();
+
 async function geocodeCountry(country) {
-  const url = new URL('https://nominatim.openstreetmap.org/search');
-  url.searchParams.set('q', country);
-  url.searchParams.set('format', 'json');
-  url.searchParams.set('limit', '1');
+  const key = country.trim().toLowerCase();
 
-  const response = await fetch(url, {
-    headers: {
-      'User-Agent': 'Subcatica/1.0 (educational project)',
-      'Accept-Language': 'ru',
-    },
-  });
+  if (geocodeCache.has(key)) {
+    return geocodeCache.get(key);
+  }
 
-  if (!response.ok) return null;
-  const data = await response.json();
-  if (!data?.length) return null;
+  if (GEO_FALLBACK[key]) {
+    const [lat, lon] = GEO_FALLBACK[key];
+    const result = { country, lat, lon };
+    geocodeCache.set(key, result);
+    return result;
+  }
 
-  return {
-    country,
-    lat: Number.parseFloat(data[0].lat),
-    lon: Number.parseFloat(data[0].lon),
-  };
+  try {
+    const url = new URL('https://nominatim.openstreetmap.org/search');
+    url.searchParams.set('q', country);
+    url.searchParams.set('format', 'json');
+    url.searchParams.set('limit', '1');
+
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 5000); // 5 сек вместо 10
+
+    const response = await fetch(url, {
+      signal: controller.signal,
+      headers: {
+        'User-Agent': 'Subcatica/1.0 (educational project)',
+        'Accept-Language': 'ru,en',
+      },
+    });
+    clearTimeout(timer);
+
+    if (!response.ok) return null;
+    const data = await response.json();
+    if (!data?.length) return null;
+
+    const result = {
+      country,
+      lat: Number.parseFloat(data[0].lat),
+      lon: Number.parseFloat(data[0].lon),
+    };
+    geocodeCache.set(key, result);
+    return result;
+  } catch (err) {
+    const msg = err.name === 'AbortError' ? 'таймаут' : err.message;
+    console.warn(`Геокодирование "${country}": ${msg}`);
+    return null;
+  }
 }
 
 app.get('/api/cards', async (req, res) => {

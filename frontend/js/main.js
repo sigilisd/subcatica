@@ -288,6 +288,30 @@ async function toggleLike(id, button) {
   }
 }
 
+function setupTextParallax(scenes) {
+  if (window.innerWidth <= 600) return;
+ 
+  scenes.forEach((scene) => {
+    const h1 = scene.querySelector('.back');
+    const p  = scene.querySelector('.mid');
+    if (!h1 || !p) return;
+ 
+    gsap.timeline({
+      scrollTrigger: {
+        trigger: scene,
+        start: 'top bottom',
+        end: 'bottom top',
+        scrub: 0.5,
+        invalidateOnRefresh: true,
+      },
+    })
+      .fromTo(h1, { y: 48 }, { y: -120, ease: 'none', duration: 1 }, 0)
+      .fromTo(p,  { y: 24 }, { y: -56,  ease: 'none', duration: 1 }, 0);
+  });
+ 
+  ScrollTrigger.refresh(true);
+}
+
 function animateCards(scenes, onDone) {
   if (!scenes?.length) {
     onDone?.();
@@ -337,21 +361,23 @@ function initScrollAnimations() {
     },
   });
 
-  [
-    ['#cat1', -360],
-    ['#cat2', 360],
-  ].forEach(([selector, rotation]) => {
-    gsap.to(selector, {
-      y: 300,
-      rotation,
-      scrollTrigger: {
-        trigger: '#welcome',
-        start: 'top top',
-        end: 'bottom top',
-        scrub: 3,
-      },
+  if (window.innerWidth > 600) {
+    [
+      ['#cat1', -360],
+      ['#cat2', 360],
+    ].forEach(([selector, rotation]) => {
+      gsap.to(selector, {
+        y: 300,
+        rotation,
+        scrollTrigger: {
+          trigger: '#welcome',
+          start: 'top top',
+          end: 'bottom top',
+          scrub: 3,
+        },
+      });
     });
-  });
+  }
 }
 
 async function loadCats() {
