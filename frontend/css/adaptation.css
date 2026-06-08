@@ -182,17 +182,17 @@
     height: 260px;
   }
 
-  .modal-content--quiz {
+  .modal-content--test {
     width: 95vw;
     padding: 18px 14px;
   }
 
-  .quiz-answer {
+  .test-answer {
     font-size: 0.95rem;
     padding: 11px 14px;
   }
 
-  .quiz-result-img {
+  .test-result-img {
     width: min(100%, 220px);
     max-height: 180px;
   }

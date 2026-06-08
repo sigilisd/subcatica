@@ -22,9 +22,9 @@ const QUIZ_CATEGORY_ALIASES = {
 };
 
 const QUIZ_DEFAULT_PHOTO = {
-  house: 'assets/img/cats/quiz/house.png',
-  wild: 'assets/img/cats/quiz/wild.png',
-  extinct: 'assets/img/cats/quiz/extinct.png',
+  house: 'assets/img/cats/test/house.png',
+  wild: 'assets/img/cats/test/wild.png',
+  extinct: 'assets/img/cats/test/extinct.png',
 };
 
 function normalizeQuizCategory(raw) {
@@ -43,7 +43,7 @@ function normalizeQuizPhoto(photo, category) {
   if (/^https?:\/\//i.test(p)) return p;
   if (p.startsWith('/')) p = p.slice(1);
   if (!p.startsWith('assets/')) {
-    p = p.includes('/') ? `assets/img/cats/${p}` : `assets/img/cats/quiz/${p}`;
+    p = p.includes('/') ? `assets/img/cats/${p}` : `assets/img/cats/test/${p}`;
   }
   return p;
 }
@@ -388,27 +388,27 @@ app.post('/api/geocode', async (req, res) => {
   }
 });
 
-app.get('/api/quiz/questions', async (req, res) => {
+app.get('/api/test/questions', async (req, res) => {
   try {
     const { rows } = await pool.query(
-      'SELECT * FROM quiz_questions ORDER BY id ASC'
+      'SELECT * FROM test_questions ORDER BY id ASC'
     );
     res.json(
       rows.map(normalizeQuestion).filter((q) => q.text && q.options.length > 0)
     );
   } catch (err) {
-    console.error('БД /api/quiz/questions:', err);
+    console.error('БД /api/test/questions:', err);
     res.status(500).json({ error: 'Не удалось загрузить вопросы' });
   }
 });
 
-app.get('/api/quiz/results/:category', async (req, res) => {
+app.get('/api/test/results/:category', async (req, res) => {
   const category = normalizeQuizCategory(req.params.category);
   if (!category) {
     return res.status(400).json({ error: 'Неизвестная категория' });
   }
   try {
-    const { rows } = await pool.query('SELECT * FROM quiz_results');
+    const { rows } = await pool.query('SELECT * FROM test_results');
     const found = rows
       .map(normalizeQuizResult)
       .find((r) => r.category === category);
@@ -417,7 +417,7 @@ app.get('/api/quiz/results/:category', async (req, res) => {
     }
     res.json(found);
   } catch (err) {
-    console.error('БД /api/quiz/results/:category:', err);
+    console.error('БД /api/test/results/:category:', err);
     res.status(500).json({ error: 'Ошибка сервера' });
   }
 });

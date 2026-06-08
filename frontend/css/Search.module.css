@@ -18,7 +18,7 @@
 
 .controls input,
 .controls select,
-.quiz-open-btn {
+.test-open-btn {
     height: 42px;
     padding: 0 12px;
     border-radius: 8px;
@@ -28,7 +28,7 @@
     font-size: 15px;
 }
 
-.quiz-open-btn {
+.test-open-btn {
     flex-shrink: 0;
     cursor: pointer;
     white-space: nowrap;
@@ -36,7 +36,7 @@
     transition: background 0.2s, border-color 0.2s;
 }
 
-.quiz-open-btn:hover {
+.test-open-btn:hover {
     background: #2a2a2a;
     border-color: #555;
 }

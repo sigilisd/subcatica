@@ -2,11 +2,11 @@ import { escHtml, escAttr } from './utils.js';
 
 const QUIZ_CATEGORIES = ['house', 'wild', 'extinct'];
 
-const modal = document.getElementById('quizModal');
-const openBtn = document.getElementById('quizOpenBtn');
-const closeBtn = document.getElementById('quizModalClose');
-const bodyEl = document.getElementById('quizModalBody');
-const progressEl = document.getElementById('quizProgress');
+const modal = document.getElementById('testModal');
+const openBtn = document.getElementById('testOpenBtn');
+const closeBtn = document.getElementById('testModalClose');
+const bodyEl = document.getElementById('testModalBody');
+const progressEl = document.getElementById('testProgress');
 
 let questions = [];
 let step = 0;
@@ -55,16 +55,16 @@ function renderQuestion() {
   const answersHtml = q.options
     .map(
       (opt, i) =>
-        `<button type="button" class="quiz-answer" data-index="${i}">${escHtml(opt.text)}</button>`
+        `<button type="button" class="test-answer" data-index="${i}">${escHtml(opt.text)}</button>`
     )
     .join('');
 
   bodyEl.innerHTML = `
-    <p class="quiz-question">${escHtml(q.text)}</p>
-    <div class="quiz-answers">${answersHtml}</div>
+    <p class="test-question">${escHtml(q.text)}</p>
+    <div class="test-answers">${answersHtml}</div>
   `;
 
-  bodyEl.querySelectorAll('.quiz-answer').forEach((btn) => {
+  bodyEl.querySelectorAll('.test-answer').forEach((btn) => {
     btn.addEventListener('click', () => {
       const option = q.options[Number(btn.dataset.index)];
       if (option?.category) scores[option.category] += 1;
@@ -79,55 +79,55 @@ async function showResult() {
   if (!bodyEl) return;
   const category = pickWinner();
 
-  bodyEl.innerHTML = '<p class="quiz-loading">Подбираем результат…</p>';
+  bodyEl.innerHTML = '<p class="test-loading">Подбираем результат…</p>';
   if (progressEl) progressEl.textContent = '';
 
   try {
-    const res = await fetch(`/api/quiz/results/${category}`);
+    const res = await fetch(`/api/test/results/${category}`);
     if (!res.ok) throw new Error('result');
     const data = await res.json();
 
     const title = data.title
-      ? `<h3 class="quiz-result-title">${escHtml(data.title)}</h3>`
+      ? `<h3 class="test-result-title">${escHtml(data.title)}</h3>`
       : '';
     const img = data.photo
-      ? `<img src="${escAttr(data.photo)}" class="quiz-result-img image-contour" alt="${escAttr(data.title)}">`
+      ? `<img src="${escAttr(data.photo)}" class="test-result-img image-contour" alt="${escAttr(data.title)}">`
       : '';
 
     bodyEl.innerHTML = `
-      <div class="quiz-result">
+      <div class="test-result">
         ${img}
         ${title}
-        <p class="quiz-result-text">${escHtml(data.text ?? '')}</p>
-        <button type="button" class="quiz-restart">Пройти снова</button>
+        <p class="test-result-text">${escHtml(data.text ?? '')}</p>
+        <button type="button" class="test-restart">Пройти снова</button>
       </div>
     `;
 
-    bodyEl.querySelector('.quiz-restart')?.addEventListener('click', startQuiz);
+    bodyEl.querySelector('.test-restart')?.addEventListener('click', startQuiz);
   } catch {
     bodyEl.innerHTML =
-      '<p class="quiz-error">Не удалось загрузить результат. Попробуйте позже.</p>';
+      '<p class="test-error">Не удалось загрузить результат. Попробуйте позже.</p>';
   }
 }
 
 async function startQuiz() {
   if (!bodyEl) return;
   resetQuiz();
-  bodyEl.innerHTML = '<p class="quiz-loading">Загрузка вопросов…</p>';
+  bodyEl.innerHTML = '<p class="test-loading">Загрузка вопросов…</p>';
   if (progressEl) progressEl.textContent = '';
 
   try {
-    const res = await fetch('/api/quiz/questions');
+    const res = await fetch('/api/test/questions');
     if (!res.ok) throw new Error('questions');
     questions = await res.json();
     if (!questions.length) {
-      bodyEl.innerHTML = '<p class="quiz-error">Вопросы квиза пока не добавлены.</p>';
+      bodyEl.innerHTML = '<p class="test-error">Вопросы квиза пока не добавлены.</p>';
       return;
     }
     renderQuestion();
   } catch {
     bodyEl.innerHTML =
-      '<p class="quiz-error">Не удалось загрузить квиз. Проверьте подключение к серверу.</p>';
+      '<p class="test-error">Не удалось загрузить квиз. Проверьте подключение к серверу.</p>';
   }
 }
 

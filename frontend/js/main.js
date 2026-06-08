@@ -1,7 +1,7 @@
 import '../css/style.css';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { initQuiz } from './quiz.js';
+import { initQuiz } from './test.js';
 import { escHtml, escAttr } from './utils.js';
 
 gsap.registerPlugin(ScrollTrigger);
