@@ -154,7 +154,7 @@ function normalizeQuizResult(row) {
   };
 }
 
-// Статичный fallback: координаты центров стран — используются если Nominatim недоступен
+// статичный fallback: координаты центров стран — используются если Nominatim недоступен
 const GEO_FALLBACK = {
   'россия': [61.5, 105.3], 'russia': [61.5, 105.3],
   'китай': [35.9, 104.2], 'china': [35.9, 104.2],
@@ -227,7 +227,7 @@ async function geocodeCountry(country) {
     url.searchParams.set('limit', '1');
 
     const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), 5000); // 5 сек вместо 10
+    const timer = setTimeout(() => controller.abort(), 5000);
 
     const response = await fetch(url, {
       signal: controller.signal,

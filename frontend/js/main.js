@@ -68,7 +68,6 @@ function initFilters() {
       if (firstVisibleCat) {
         firstVisibleCat.scrollIntoView({ behavior: 'smooth', block: 'center' });
         
-        // Быстрый визуальный отклик карточки
         gsap.fromTo(firstVisibleCat, 
           { scale: 1 }, 
           { scale: 1.02, duration: 0.3, yoyo: true, repeat: 1, ease: 'power1.inOut' }
